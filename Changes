@@ -1,5 +1,9 @@
 Revision history for Perl extension XML::Parser.
 
+2.32
+    - Memory leak fix (perl-xml list and GrantM).
+    - Added windows-1252 encoding
+    
 2.31 Tue Apr  2 13:39:51 EST 2002
 	- Ilya Zakharevich <ilya@math.ohio-state.edu> and
 	  Dave Mitchell <davem@fdgroup.com> both provided patches to

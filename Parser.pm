@@ -9,18 +9,17 @@
 package XML::Parser;
 
 use Carp;
-use IO::File;
 
 BEGIN {
   require XML::Parser::Expat;
-  $VERSION = '2.31';
+  $VERSION = '2.32';
   die "Parser.pm and Expat.pm versions don't match"
     unless $VERSION eq $XML::Parser::Expat::VERSION;
 }
 
 use strict;
 
-use vars qw($VERSION %Built_In_Styles $LWP_load_failed);
+use vars qw($VERSION $LWP_load_failed);
 
 $LWP_load_failed = 0;
 
@@ -49,14 +48,10 @@ sub new {
     if ($stylepkg !~ /::/) {
       $stylepkg = "\u$style";
       
-      # I'm using the Built_In_Styles hash to define
-      # valid internal styles, since a style doesn't
-      # need to define any particular Handler to be valid.
-      # So I can't check for the existence of a particular sub.
-      
-      croak "Undefined style: $style"
-	unless defined($Built_In_Styles{$stylepkg});
-      $stylepkg = 'XML::Parser::' . $stylepkg;
+      $stylepkg = 'XML::Parser::Style::' . $stylepkg;
+      my $stylefile = $stylepkg;
+      $stylefile =~ s/::/\//g;
+      require "$stylefile.pm";
     }
     
     my $htype;
@@ -64,28 +59,28 @@ sub new {
       # Handlers explicity given override
       # handlers from the Style package
       unless (defined($handlers->{$htype})) {
-	
-	# A handler in the style package must either have
-	# exactly the right case as the type name or a
-	# completely lower case version of it.
-	
-	my $hname = "${stylepkg}::$htype";
-	if (defined(&$hname)) {
-	  $handlers->{$htype} = \&$hname;
-	  next;
-	}
-	
-	$hname = "${stylepkg}::\L$htype";
-	if (defined(&$hname)) {
-	  $handlers->{$htype} = \&$hname;
-	  next;
-	}
+        
+        # A handler in the style package must either have
+        # exactly the right case as the type name or a
+        # completely lower case version of it.
+        
+        my $hname = "${stylepkg}::$htype";
+        if (defined(&$hname)) {
+          $handlers->{$htype} = \&$hname;
+          next;
+        }
+        
+        $hname = "${stylepkg}::\L$htype";
+        if (defined(&$hname)) {
+          $handlers->{$htype} = \&$hname;
+          next;
+        }
       }
     }
   }
   
   unless (defined($handlers->{ExternEnt})
-	  or defined ($handlers->{ExternEntFin})) {
+          or defined ($handlers->{ExternEntFin})) {
     
     if ($args{NoLWP} or $LWP_load_failed) {
       $handlers->{ExternEnt} = \&file_ext_ent_handler;
@@ -103,7 +98,7 @@ sub new {
 
   $args{Pkg} ||= caller;
   bless \%args, $class;
-}				# End of new
+}                                # End of new
 
 sub setHandlers {
   my ($self, @handler_pairs) = @_;
@@ -125,7 +120,7 @@ sub setHandlers {
   }
 
   return @ret;
-}				# End of setHandlers
+}
 
 sub parse_start {
   my $self = shift;
@@ -203,12 +198,12 @@ sub parse {
 
   return unless defined wantarray;
   return wantarray ? @result : $result;
-}				# End of parse
+}
 
 sub parsestring {
   my $self = shift;
   $self->parse(@_);
-}				# End of parsestring
+}
 
 sub parsefile {
   my $self = shift;
@@ -237,8 +232,7 @@ sub parsefile {
   
   return unless defined wantarray;
   return wantarray ? @ret : $ret;
-}				# End of parsefile
-
+}
 
 sub initial_ext_ent_handler {
   # This just bootstraps in the real lwp_ext_ent_handler which
@@ -249,13 +243,13 @@ sub initial_ext_ent_handler {
 
     my $stat =
       eval {
-	require('XML/Parser/LWPExternEnt.pl');
+        require('XML/Parser/LWPExternEnt.pl');
       };
       
     if ($stat) {
       $_[0]->setHandlers(ExternEnt    => \&lwp_ext_ent_handler,
-			 ExternEntFin => \&lwp_ext_ent_cleanup);
-		       
+                         ExternEntFin => \&lwp_ext_ent_cleanup);
+                       
       goto &lwp_ext_ent_handler;
     }
 
@@ -270,10 +264,10 @@ sub initial_ext_ent_handler {
   }
 
   $_[0]->setHandlers(ExternEnt    => \&file_ext_ent_handler,
-		     ExternEntFin => \&file_ext_ent_cleanup);
+                     ExternEntFin => \&file_ext_ent_cleanup);
   goto &file_ext_ent_handler;
 
-}  # End initial_ext_ent_handler
+}
 
 sub file_ext_ent_handler {
   my ($xp, $base, $path) = @_;
@@ -291,10 +285,11 @@ sub file_ext_ent_handler {
   if ($path =~ /^\s*[|>+]/
       or $path =~ /\|\s*$/) {
     $xp->{ErrorMessage}
-	.= "System ID ($path) contains Perl IO control characters";
+        .= "System ID ($path) contains Perl IO control characters";
     return undef;
   }
 
+  require IO::File;
   my $fh = new IO::File($path);
   unless (defined $fh) {
     $xp->{ErrorMessage}
@@ -311,7 +306,7 @@ sub file_ext_ent_handler {
   $xp->base($path);
   
   return $fh;
-}  # End file_ext_ent_handler
+}
 
 sub file_ext_ent_cleanup {
   my ($xp) = @_;
@@ -321,261 +316,6 @@ sub file_ext_ent_cleanup {
 
   my $base = pop(@{$xp->{_BaseStack}});
   $xp->base($base);
-}  # End file_ext_ent_cleanup
-
-###################################################################
-
-package XML::Parser::Debug;
-$XML::Parser::Built_In_Styles{Debug} = 1;
-
-sub Start {
-  my $expat = shift;
-  my $tag = shift;
-  print STDERR "@{$expat->{Context}} \\\\ (@_)\n";
-}
-
-sub End {
-  my $expat = shift;
-  my $tag = shift;
-  print STDERR "@{$expat->{Context}} //\n";
-}
-
-sub Char {
-  my $expat = shift;
-  my $text = shift;
-  $text =~ s/([\x80-\xff])/sprintf "#x%X;", ord $1/eg;
-  $text =~ s/([\t\n])/sprintf "#%d;", ord $1/eg;
-  print STDERR "@{$expat->{Context}} || $text\n";
-}
-
-sub Proc {
-  my $expat = shift;
-  my $target = shift;
-  my $text = shift;
-  my @foo = @{$expat->{Context}};
-  print STDERR "@foo $target($text)\n";
-}
-
-###################################################################
-
-package XML::Parser::Subs;
-$XML::Parser::Built_In_Styles{Subs} = 1;
-
-sub Start {
-  no strict 'refs';
-  my $expat = shift;
-  my $tag = shift;
-  my $sub = $expat->{Pkg} . "::$tag";
-  eval { &$sub($expat, $tag, @_) };
-}
-
-sub End {
-  no strict 'refs';
-  my $expat = shift;
-  my $tag = shift;
-  my $sub = $expat->{Pkg} . "::${tag}_";
-  eval { &$sub($expat, $tag) };
-}
-
-###################################################################
-
-package XML::Parser::Tree;
-$XML::Parser::Built_In_Styles{Tree} = 1;
-
-sub Init {
-  my $expat = shift;
-  $expat->{Lists} = [];
-  $expat->{Curlist} = $expat->{Tree} = [];
-}
-
-sub Start {
-  my $expat = shift;
-  my $tag = shift;
-  my $newlist = [ { @_ } ];
-  push @{ $expat->{Lists} }, $expat->{Curlist};
-  push @{ $expat->{Curlist} }, $tag => $newlist;
-  $expat->{Curlist} = $newlist;
-}
-
-sub End {
-  my $expat = shift;
-  my $tag = shift;
-  $expat->{Curlist} = pop @{ $expat->{Lists} };
-}
-
-sub Char {
-  my $expat = shift;
-  my $text = shift;
-  my $clist = $expat->{Curlist};
-  my $pos = $#$clist;
-  
-  if ($pos > 0 and $clist->[$pos - 1] eq '0') {
-    $clist->[$pos] .= $text;
-  } else {
-    push @$clist, 0 => $text;
-  }
-}
-
-sub Final {
-  my $expat = shift;
-  delete $expat->{Curlist};
-  delete $expat->{Lists};
-  $expat->{Tree};
-}
-
-###################################################################
-
-package XML::Parser::Objects;
-$XML::Parser::Built_In_Styles{Objects} = 1;
-
-sub Init {
-  my $expat = shift;
-  $expat->{Lists} = [];
-  $expat->{Curlist} = $expat->{Tree} = [];
-}
-
-sub Start {
-  my $expat = shift;
-  my $tag = shift;
-  my $newlist = [ ];
-  my $class = "${$expat}{Pkg}::$tag";
-  my $newobj = bless { @_, Kids => $newlist }, $class;
-  push @{ $expat->{Lists} }, $expat->{Curlist};
-  push @{ $expat->{Curlist} }, $newobj;
-  $expat->{Curlist} = $newlist;
-}
-
-sub End {
-  my $expat = shift;
-  my $tag = shift;
-  $expat->{Curlist} = pop @{ $expat->{Lists} };
-}
-
-sub Char {
-  my $expat = shift;
-  my $text = shift;
-  my $class = "${$expat}{Pkg}::Characters";
-  my $clist = $expat->{Curlist};
-  my $pos = $#$clist;
-  
-  if ($pos >= 0 and ref($clist->[$pos]) eq $class) {
-    $clist->[$pos]->{Text} .= $text;
-  } else {
-    push @$clist, bless { Text => $text }, $class;
-  }
-}
-
-sub Final {
-  my $expat = shift;
-  delete $expat->{Curlist};
-  delete $expat->{Lists};
-  $expat->{Tree};
-}
-
-################################################################
-
-package XML::Parser::Stream;
-$XML::Parser::Built_In_Styles{Stream} = 1;
-
-# This style invented by Tim Bray <tbray@textuality.com>
-
-sub Init {
-  no strict 'refs';
-  my $expat = shift;
-  $expat->{Text} = '';
-  my $sub = $expat->{Pkg} ."::StartDocument";
-  &$sub($expat)
-    if defined(&$sub);
-}
-
-sub Start {
-  no strict 'refs';
-  my $expat = shift;
-  my $type = shift;
-  
-  doText($expat);
-  $_ = "<$type";
-  
-  %_ = @_;
-  while (@_) {
-    $_ .= ' ' . shift() . '="' . shift() . '"';
-  }
-  $_ .= '>';
-  
-  my $sub = $expat->{Pkg} . "::StartTag";
-  if (defined(&$sub)) {
-    &$sub($expat, $type);
-  } else {
-    print;
-  }
-}
-
-sub End {
-  no strict 'refs';
-  my $expat = shift;
-  my $type = shift;
-  
-  # Set right context for Text handler
-  push(@{$expat->{Context}}, $type);
-  doText($expat);
-  pop(@{$expat->{Context}});
-  
-  $_ = "</$type>";
-  
-  my $sub = $expat->{Pkg} . "::EndTag";
-  if (defined(&$sub)) {
-    &$sub($expat, $type);
-  } else {
-    print;
-  }
-}
-
-sub Char {
-  my $expat = shift;
-  $expat->{Text} .= shift;
-}
-
-sub Proc {
-  no strict 'refs';
-  my $expat = shift;
-  my $target = shift;
-  my $text = shift;
-  
-  doText($expat);
-
-  $_ = "<?$target $text?>";
-  
-  my $sub = $expat->{Pkg} . "::PI";
-  if (defined(&$sub)) {
-    &$sub($expat, $target, $text);
-  } else {
-    print;
-  }
-}
-
-sub Final {
-  no strict 'refs';
-  my $expat = shift;
-  my $sub = $expat->{Pkg} . "::EndDocument";
-  &$sub($expat)
-    if defined(&$sub);
-}
-
-sub doText {
-  no strict 'refs';
-  my $expat = shift;
-  $_ = $expat->{Text};
-  
-  if (length($_)) {
-    my $sub = $expat->{Pkg} . "::Text";
-    if (defined(&$sub)) {
-      &$sub($expat);
-    } else {
-      print;
-    }
-    
-    $expat->{Text} = '';
-  }
 }
 
 1;
@@ -596,15 +336,15 @@ XML::Parser - A perl module for parsing XML documents
 
   # Alternative
   $p2 = new XML::Parser(Handlers => {Start => \&handle_start,
-				     End   => \&handle_end,
-				     Char  => \&handle_char});
+                                     End   => \&handle_end,
+                                     Char  => \&handle_char});
   $p2->parse($socket);
 
   # Another alternative
   $p3 = new XML::Parser(ErrorContext => 2);
 
   $p3->setHandlers(Char    => \&text,
-		   Default => \&other);
+                   Default => \&other);
 
   open(FOO, 'xmlgenerator |');
   $p3->parse(*FOO, ProtocolEncoding => 'ISO-8859-1');
@@ -652,7 +392,10 @@ as keyword value pairs. Recognized options are:
 
 This option provides an easy way to create a given style of parser. The
 built in styles are: L<"Debug">, L<"Subs">, L<"Tree">, L<"Objects">,
-and L<"Stream">.
+and L<"Stream">. These are all defined in separate packages under
+C<XML::Parser::Style::*>, and you can find further documentation for
+each style both below, and in those packages.
+
 Custom styles can be provided by giving a full package name containing
 at least one '::'. This package should then have subs defined for each
 handler it wishes to have installed. See L<"STYLES"> below
@@ -787,27 +530,27 @@ All handlers receive an instance of XML::Parser::Expat as their first
 argument. See L<XML::Parser::Expat/"METHODS"> for a discussion of the
 methods that can be called on this object.
 
-=head2 Init		(Expat)
+=head2 Init                (Expat)
 
 This is called just before the parsing of the document starts.
 
-=head2 Final		(Expat)
+=head2 Final                (Expat)
 
 This is called just after parsing has finished, but only if no errors
 occurred during the parse. Parse returns what this returns.
 
-=head2 Start		(Expat, Element [, Attr, Val [,...]])
+=head2 Start                (Expat, Element [, Attr, Val [,...]])
 
 This event is generated when an XML start tag is recognized. Element is the
 name of the XML element type that is opened with the start tag. The Attr &
 Val pairs are generated for each attribute in the start tag.
 
-=head2 End		(Expat, Element)
+=head2 End                (Expat, Element)
 
 This event is generated when an XML end tag is recognized. Note that
 an XML empty tag (<foo/>) generates both a start and an end event.
 
-=head2 Char		(Expat, String)
+=head2 Char                (Expat, String)
 
 This event is generated when non-markup is recognized. The non-markup
 sequence of characters is in String. A single non-markup sequence of
@@ -815,23 +558,23 @@ characters may generate multiple calls to this handler. Whatever the
 encoding of the string in the original document, this is given to the
 handler in UTF-8.
 
-=head2 Proc		(Expat, Target, Data)
+=head2 Proc                (Expat, Target, Data)
 
 This event is generated when a processing instruction is recognized.
 
-=head2 Comment		(Expat, Data)
+=head2 Comment                (Expat, Data)
 
 This event is generated when a comment is recognized.
 
-=head2 CdataStart	(Expat)
+=head2 CdataStart        (Expat)
 
 This is called at the start of a CDATA section.
 
-=head2 CdataEnd		(Expat)
+=head2 CdataEnd                (Expat)
 
 This is called at the end of a CDATA section.
 
-=head2 Default		(Expat, String)
+=head2 Default                (Expat, String)
 
 This is called for any characters that don't have a registered handler.
 This includes both characters that are part of markup for which no
@@ -841,20 +584,20 @@ could generate events, but for which no handler has been registered.
 Whatever the encoding in the original document, the string is returned to
 the handler in UTF-8.
 
-=head2 Unparsed		(Expat, Entity, Base, Sysid, Pubid, Notation)
+=head2 Unparsed                (Expat, Entity, Base, Sysid, Pubid, Notation)
 
 This is called for a declaration of an unparsed entity. Entity is the name
 of the entity. Base is the base to be used for resolving a relative URI.
 Sysid is the system id. Pubid is the public id. Notation is the notation
 name. Base and Pubid may be undefined.
 
-=head2 Notation		(Expat, Notation, Base, Sysid, Pubid)
+=head2 Notation                (Expat, Notation, Base, Sysid, Pubid)
 
 This is called for a declaration of notation. Notation is the notation name.
 Base is the base to be used for resolving a relative URI. Sysid is the system
 id. Pubid is the public id. Base, Sysid, and Pubid may all be undefined.
 
-=head2 ExternEnt	(Expat, Base, Sysid, Pubid)
+=head2 ExternEnt        (Expat, Base, Sysid, Pubid)
 
 This is called when an external entity is referenced. Base is the base to be
 used for resolving a relative URI. Sysid is the system id. Pubid is the public
@@ -890,7 +633,7 @@ The expat base method can be used to set a basename for
 relative pathnames. If no basename is given, or if the basename is itself
 a relative name, then it is relative to the current working directory.
 
-=head2 ExternEntFin	(Expat)
+=head2 ExternEntFin        (Expat)
 
 This is called after parsing an external entity. It's not called unless
 an ExternEnt handler is also set. There is a default handler installed
@@ -899,7 +642,7 @@ that pairs with the default ExternEnt handler.
 If you're going to install your own ExternEnt handler, then you should
 set (or unset) this handler too.
 
-=head2 Entity		(Expat, Name, Val, Sysid, Pubid, Ndata, IsParam)
+=head2 Entity                (Expat, Name, Val, Sysid, Pubid, Ndata, IsParam)
 
 This is called when an entity is declared. For internal entities, the Val
 parameter will contain the value and the remaining three parameters will be
@@ -912,14 +655,14 @@ parameter entity declaration, then the IsParam parameter is true.
 Note that this handler and the Unparsed handler above overlap. If both are
 set, then this handler will not be called for unparsed entities.
 
-=head2 Element		(Expat, Name, Model)
+=head2 Element                (Expat, Name, Model)
 
 The element handler is called when an element declaration is found. Name
 is the element name, and Model is the content model as an XML::Parser::Content
 object. See L<XML::Parser::Expat/"XML::Parser::ContentModel Methods">
 for methods available for this class.
 
-=head2 Attlist		(Expat, Elname, Attname, Type, Default, Fixed)
+=head2 Attlist                (Expat, Elname, Attname, Type, Default, Fixed)
 
 This handler is called for each attribute in an ATTLIST declaration.
 So an ATTLIST declaration that has multiple attributes will generate multiple
@@ -930,7 +673,7 @@ the default value, which will either be "#REQUIRED", "#IMPLIED" or a quoted
 string (i.e. the returned string will begin and end with a quote character).
 If Fixed is true, then this is a fixed attribute.
 
-=head2 Doctype		(Expat, Name, Sysid, Pubid, Internal)
+=head2 Doctype                (Expat, Name, Sysid, Pubid, Internal)
 
 This handler is called for DOCTYPE declarations. Name is the document type
 name. Sysid is the system id of the document type, if it was provided,
@@ -944,12 +687,12 @@ will be there whether or not they have been processed by another handler
 comments and processing instructions will not appear if they've been processed
 by their respective handlers.
 
-=head2 * DoctypeFin		(Parser)
+=head2 * DoctypeFin                (Parser)
 
 This handler is called after parsing of the DOCTYPE declaration has finished,
 including any internal or external DTD declarations.
 
-=head2 XMLDecl		(Expat, Version, Encoding, Standalone)
+=head2 XMLDecl                (Expat, Version, Encoding, Standalone)
 
 This handler is called for xml declarations. Version is a string containg
 the version. Encoding is either undefined or contains an encoding string.
@@ -993,9 +736,9 @@ would be:
              Tag   Content
   ==================================================================
   [foo, [{}, head, [{id => "a"}, 0, "Hello ",  em, [{}, 0, "there"]],
-	      bar, [         {}, 0, "Howdy",  ref, [{}]],
-	        0, "do"
-	]
+              bar, [         {}, 0, "Howdy",  ref, [{}]],
+                0, "do"
+        ]
   ]
 
 The root document "foo", has 3 children: a "head" element, a "bar"
@@ -1083,5 +826,7 @@ Larry Wall <F<larry@wall.org>> wrote version 1.0.
 Clark Cooper <F<coopercc@netheaven.com>> picked up support, changed the API
 for this version (2.x), provided documentation,
 and added some standard package features.
+
+Matt Sergeant <F<matt@sergeant.org>> is now maintaining XML::Parser
 
 =cut

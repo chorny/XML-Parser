@@ -4,24 +4,22 @@ require 5.004;
 
 use strict;
 use vars qw($VERSION @ISA %Handler_Setters %Encoding_Table @Encoding_Path
-	    $have_File_Spec);
+            $have_File_Spec);
 use Carp;
-
-use IO::Handle;
 
 require DynaLoader;
 
 @ISA = qw(DynaLoader);
-$VERSION = "2.31" ;
+$VERSION = "2.32" ;
 
 $have_File_Spec = $INC{'File/Spec.pm'} || do 'File/Spec.pm';
 
 %Encoding_Table = ();
 if ($have_File_Spec) {
   @Encoding_Path = (grep(-d $_,
-			 map(File::Spec->catdir($_, qw(XML Parser Encodings)),
-			     @INC)),
-		    File::Spec->curdir);
+                         map(File::Spec->catdir($_, qw(XML Parser Encodings)),
+                             @INC)),
+                    File::Spec->curdir);
 }
 else {
   @Encoding_Path = (grep(-d $_, map($_ . '/XML/Parser/Encodings', @INC)), '.');
@@ -31,25 +29,25 @@ else {
 bootstrap XML::Parser::Expat $VERSION;
 
 %Handler_Setters = (
-		    Start => \&SetStartElementHandler,
-		    End   => \&SetEndElementHandler,
-		    Char  => \&SetCharacterDataHandler,
-		    Proc  => \&SetProcessingInstructionHandler,
-		    Comment => \&SetCommentHandler,
-		    CdataStart => \&SetStartCdataHandler,
-		    CdataEnd   => \&SetEndCdataHandler,
-		    Default => \&SetDefaultHandler,
-		    Unparsed => \&SetUnparsedEntityDeclHandler,
-		    Notation => \&SetNotationDeclHandler,
-		    ExternEnt => \&SetExternalEntityRefHandler,
-		    ExternEntFin => \&SetExtEntFinishHandler,
-		    Entity => \&SetEntityDeclHandler,
-		    Element => \&SetElementDeclHandler,
-		    Attlist => \&SetAttListDeclHandler,
-		    Doctype => \&SetDoctypeHandler,
-		    DoctypeFin => \&SetEndDoctypeHandler,
-		    XMLDecl => \&SetXMLDeclHandler
-		    );
+                    Start => \&SetStartElementHandler,
+                    End   => \&SetEndElementHandler,
+                    Char  => \&SetCharacterDataHandler,
+                    Proc  => \&SetProcessingInstructionHandler,
+                    Comment => \&SetCommentHandler,
+                    CdataStart => \&SetStartCdataHandler,
+                    CdataEnd   => \&SetEndCdataHandler,
+                    Default => \&SetDefaultHandler,
+                    Unparsed => \&SetUnparsedEntityDeclHandler,
+                    Notation => \&SetNotationDeclHandler,
+                    ExternEnt => \&SetExternalEntityRefHandler,
+                    ExternEntFin => \&SetExtEntFinishHandler,
+                    Entity => \&SetEntityDeclHandler,
+                    Element => \&SetElementDeclHandler,
+                    Attlist => \&SetAttListDeclHandler,
+                    Doctype => \&SetDoctypeHandler,
+                    DoctypeFin => \&SetEndDoctypeHandler,
+                    XMLDecl => \&SetXMLDeclHandler
+                    );
 
 sub new {
   my ($class, %args) = @_;
@@ -66,7 +64,7 @@ sub new {
   }
   $args{_Setters} = \%Handler_Setters;
   $args{Parser} = ParserCreate($self, $args{ProtocolEncoding},
-			       $args{Namespaces});
+                               $args{Namespaces});
   $self;
 }
 
@@ -78,11 +76,11 @@ sub load_encoding {
   unless ($file =~ m!^/!) {
     foreach (@Encoding_Path) {
       my $tmp = ($have_File_Spec
-		 ? File::Spec->catfile($_, $file)
-		 : "$_/$file");
+                 ? File::Spec->catfile($_, $file)
+                 : "$_/$file");
       if (-e $tmp) {
-	$file = $tmp;
-	last;
+        $file = $tmp;
+        last;
       }
     }
   }
@@ -263,7 +261,7 @@ sub generate_ns_name {
 
   $namespace ?
     GenerateNSName($name, $namespace, $self->{Namespace_Table},
-		   $self->{Namespace_List})
+                   $self->{Namespace_List})
       : $name;
 }
 
@@ -375,7 +373,7 @@ sub position_in_context {
   
     if ($dosplit) {
       $ret = substr($string, 0, $linepos) . $ptr
-	. substr($string, $linepos);
+        . substr($string, $linepos);
     } else {
       $ret = $string . $ptr;
     }
@@ -406,11 +404,11 @@ sub xml_escape {
     else {
       my $rep = '&#' . sprintf('x%X', ord($_)) . ';';
       if (/\W/) {
-	my $ptrn = "\\$_";
-	$text =~ s/$ptrn/$rep/g;
+        my $ptrn = "\\$_";
+        $text =~ s/$ptrn/$rep/g;
       }
       else {
-	$text =~ s/$_/$rep/g;
+        $text =~ s/$_/$rep/g;
       }
     }
   }
@@ -452,9 +450,10 @@ sub parse {
       $ioref = $arg if defined &{"${class}::TIEHANDLE"};
     }
     else {
+      require IO::Handle;
       eval {
         no strict 'refs';
-	$ioref = *{$arg}{IO} if defined *{$arg};
+        $ioref = *{$arg}{IO} if defined *{$arg};
       };
       undef $@;
     }
@@ -670,7 +669,7 @@ XML::Parser::Expat - Lowlevel access to James Clark's expat XML parser
 
  $parser = new XML::Parser::Expat;
  $parser->setHandlers('Start' => \&sh,
-		      'End'   => \&eh,
+                      'End'   => \&eh,
                       'Char'  => \&ch);
  open(FOO, 'info.xml') or die "Couldn't open";
  $parser->parse(*FOO);
@@ -787,14 +786,14 @@ handlers are:
 
 =over 4
 
-=item * Start		(Parser, Element [, Attr, Val [,...]])
+=item * Start             (Parser, Element [, Attr, Val [,...]])
 
 This event is generated when an XML start tag is recognized. Parser is
 an XML::Parser::Expat instance. Element is the name of the XML element that
 is opened with the start tag. The Attr & Val pairs are generated for each
 attribute in the start tag.
 
-=item * End		(Parser, Element)
+=item * End               (Parser, Element)
 
 This event is generated when an XML end tag is recognized. Note that
 an XML empty tag (<foo/>) generates both a start and an end event.
@@ -804,7 +803,7 @@ the corresponding callbacks. This is to handle the context mechanism.
 A consequence of this is that the default handler (see below) will not
 see a start tag or end tag unless the default_current method is called.
 
-=item * Char		(Parser, String)
+=item * Char              (Parser, String)
 
 This event is generated when non-markup is recognized. The non-markup
 sequence of characters is in String. A single non-markup sequence of
@@ -812,23 +811,23 @@ characters may generate multiple calls to this handler. Whatever the
 encoding of the string in the original document, this is given to the
 handler in UTF-8.
 
-=item * Proc		(Parser, Target, Data)
+=item * Proc              (Parser, Target, Data)
 
 This event is generated when a processing instruction is recognized.
 
-=item * Comment		(Parser, String)
+=item * Comment           (Parser, String)
 
 This event is generated when a comment is recognized.
 
-=item * CdataStart	(Parser)
+=item * CdataStart        (Parser)
 
 This is called at the start of a CDATA section.
 
-=item * CdataEnd	(Parser)
+=item * CdataEnd          (Parser)
 
 This is called at the end of a CDATA section.
 
-=item * Default		(Parser, String)
+=item * Default           (Parser, String)
 
 This is called for any characters that don't have a registered handler.
 This includes both characters that are part of markup for which no
@@ -838,20 +837,20 @@ could generate events, but for which no handler has been registered.
 Whatever the encoding in the original document, the string is returned to
 the handler in UTF-8.
 
-=item * Unparsed		(Parser, Entity, Base, Sysid, Pubid, Notation)
+=item * Unparsed          (Parser, Entity, Base, Sysid, Pubid, Notation)
 
 This is called for a declaration of an unparsed entity. Entity is the name
 of the entity. Base is the base to be used for resolving a relative URI.
 Sysid is the system id. Pubid is the public id. Notation is the notation
 name. Base and Pubid may be undefined.
 
-=item * Notation		(Parser, Notation, Base, Sysid, Pubid)
+=item * Notation          (Parser, Notation, Base, Sysid, Pubid)
 
 This is called for a declaration of notation. Notation is the notation name.
 Base is the base to be used for resolving a relative URI. Sysid is the system
 id. Pubid is the public id. Base, Sysid, and Pubid may all be undefined.
 
-=item * ExternEnt		(Parser, Base, Sysid, Pubid)
+=item * ExternEnt         (Parser, Base, Sysid, Pubid)
 
 This is called when an external entity is referenced. Base is the base to be
 used for resolving a relative URI. Sysid is the system id. Pubid is the public
@@ -865,13 +864,13 @@ external entity couldn't be found and will generate a parse error.
 If an open filehandle is returned, it must be returned as either a glob
 (*FOO) or as a reference to a glob (e.g. an instance of IO::Handle).
 
-=item * ExternEntFin		(Parser)
+=item * ExternEntFin      (Parser)
 
 This is called after an external entity has been parsed. It allows
 applications to perform cleanup on actions performed in the above
 ExternEnt handler.
 
-=item * Entity			(Parser, Name, Val, Sysid, Pubid, Ndata, IsParam)
+=item * Entity            (Parser, Name, Val, Sysid, Pubid, Ndata, IsParam)
 
 This is called when an entity is declared. For internal entities, the Val
 parameter will contain the value and the remaining three parameters will
@@ -885,14 +884,14 @@ parameter is true.
 Note that this handler and the Unparsed handler above overlap. If both are
 set, then this handler will not be called for unparsed entities.
 
-=item * Element			(Parser, Name, Model)
+=item * Element           (Parser, Name, Model)
 
 The element handler is called when an element declaration is found. Name is
 the element name, and Model is the content model as an
 XML::Parser::ContentModel object. See L<"XML::Parser::ContentModel Methods">
 for methods available for this class.
 
-=item * Attlist			(Parser, Elname, Attname, Type, Default, Fixed)
+=item * Attlist           (Parser, Elname, Attname, Type, Default, Fixed)
 
 This handler is called for each attribute in an ATTLIST declaration.
 So an ATTLIST declaration that has multiple attributes
@@ -903,7 +902,7 @@ a string. Default is the default value, which will either be "#REQUIRED",
 "#IMPLIED" or a quoted string (i.e. the returned string will begin and end
 with a quote character). If Fixed is true, then this is a fixed attribute.
 
-=item * Doctype			(Parser, Name, Sysid, Pubid, Internal)
+=item * Doctype           (Parser, Name, Sysid, Pubid, Internal)
 
 This handler is called for DOCTYPE declarations. Name is the document type
 name. Sysid is the system id of the document type, if it was provided,
@@ -912,12 +911,12 @@ which will be undefined if no public id was given. Internal will be
 true or false, indicating whether or not the doctype declaration contains
 an internal subset.
 
-=item * DoctypeFin		(Parser)
+=item * DoctypeFin        (Parser)
 
 This handler is called after parsing of the DOCTYPE declaration has finished,
 including any internal or external DTD declarations.
 
-=item * XMLDecl			(Parser, Version, Encoding, Standalone)
+=item * XMLDecl           (Parser, Version, Encoding, Standalone)
 
 This handler is called for XML declarations. Version is a string containg
 the version. Encoding is either undefined or contains an encoding string.
