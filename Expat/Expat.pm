@@ -568,7 +568,7 @@ sub asString {
   }
   else {
     my $sep = $self->{Type} == CHOICE ? '|' : ',';
-    $ret = '(' . join($sep, @{$self->{Children}}) . ')';
+    $ret = '(' . join($sep, map { $_->asString } @{$self->{Children}}) . ')';
   }
 
   $ret .= $self->{Quant} if $self->{Quant};
