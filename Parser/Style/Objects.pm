@@ -1,4 +1,4 @@
-# $Id: Object.pm,v 1.1 2003-07-27 16:07:49 matt Exp $
+# $Id: Objects.pm,v 1.1 2003-08-18 20:20:51 matt Exp $
 
 package XML::Parser::Style::Objects;
 use strict;
@@ -52,17 +52,17 @@ __END__
 
 =head1 NAME
 
-XML::Parser::Style::Object
+XML::Parser::Style::Objects
 
 =head1 SYNOPSIS
 
   use XML::Parser;
-  my $p = XML::Parser->new(Style => 'Object', Pkg => 'MyNode');
+  my $p = XML::Parser->new(Style => 'Objects', Pkg => 'MyNode');
   my $tree = $p->parsefile('foo.xml');
 
 =head1 DESCRIPTION
 
-This module implements XML::Parser's Object style parser.
+This module implements XML::Parser's Objects style parser.
 
 This is similar to the Tree style, except that a hash object is created for
 each element. The corresponding object will be in the class whose name

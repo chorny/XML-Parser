@@ -28,7 +28,7 @@ Parser/Encodings/x-sjis-jdk117.enc       x-sjis-jdk117 encoding map
 Parser/Encodings/x-sjis-jisx0221.enc     x-sjis-jisx0221 encoding map
 Parser/Encodings/x-sjis-unicode.enc      x-sjis-unicode encoding map
 Parser/Style/Debug.pm           Debug style parser
-Parser/Style/Object.pm          Object style parser
+Parser/Style/Objects.pm         Objects style parser
 Parser/Style/Stream.pm          Stream style parser
 Parser/Style/Subs.pm            Subs style parser
 Parser/Style/Tree.pm            Tree style parser
