@@ -1,7 +1,7 @@
 Revision history for Perl extension XML::Parser.
 
 2.32
-    - Memory leak fix (perl-xml list and GrantM).
+    - Memory leak fix (Juerd Waalboer).
     - Added windows-1252 encoding
     - Styles moved to separate .pm files to make loading faster and
       ease maintainence
