@@ -1,6 +1,6 @@
-# $Id: Tree.pm,v 1.1 2003-07-27 16:07:49 matt Exp $
+# $Id: Tree.pm,v 1.2 2003-07-31 07:54:51 matt Exp $
 
-package XML::Parser::Tree;
+package XML::Parser::Style::Tree;
 $XML::Parser::Built_In_Styles{Tree} = 1;
 
 sub Init {

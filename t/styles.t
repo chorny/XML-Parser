@@ -1,5 +1,5 @@
 use Test;
-BEGIN { plan tests => 8 }
+BEGIN { plan tests => 13 }
 use XML::Parser;
 use IO::File;
 
@@ -18,6 +18,7 @@ my $xmlstr = '<foo>bar</foo>';
     
     close(STDERR);
     open(STDERR, ">&OLDERR");
+    close(OLDERR);
     
     seek($tmpfile, 0, 0);
     my $warn = 0;
@@ -52,5 +53,10 @@ my $xmlstr = '<foo>bar</foo>';
     ok($parser);
 
     my $tree = $parser->parse($xmlstr);
-    ok($tree);
+    ok(ref($tree), 'ARRAY');
+    ok($tree->[0], 'foo');
+    ok(ref($tree->[1]), 'ARRAY');
+    ok(ref($tree->[1]->[0]), 'HASH');
+    ok($tree->[1][1], '0');
+    ok($tree->[1][2], 'bar');
 }
