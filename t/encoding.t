@@ -1,4 +1,4 @@
-BEGIN {print "1..4\n";}
+BEGIN {print "1..6\n";}
 END {print "not ok 1\n" unless $loaded;}
 use XML::Parser;
 $loaded = 1;
@@ -77,4 +77,34 @@ if ($lastel eq $exptag) {
 else {
   print "not ok 4\n";
 }
+
+# Test the CP-1252 Win-Latin-1 mapping
+
+$docstring = qq(<?xml version='1.0' encoding='WINDOWS-1252' ?>
+<doc euro="\x80" lsq="\x91" rdq="\x94" />
+);
+
+my %attr;
+
+sub get_attr {
+  my ($xp, $el, @list) = @_;
+  %attr = @list;
+}
+
+my $p = new XML::Parser(Handlers => {Start => \&get_attr});
+
+eval{ $p->parse($docstring) };
+
+if($@) {
+  print "not ";     # couldn't load the map
+}
+print "ok 5\n";
+
+if(   $attr{euro} ne ( $] < 5.006 ? "\xE2\x82\xAC" : chr(0x20AC) )
+   or $attr{lsq}  ne ( $] < 5.006 ? "\xE2\x80\x98" : chr(0x2018) )
+   or $attr{rdq}  ne ( $] < 5.006 ? "\xE2\x80\x9D" : chr(0x201D) )
+) {
+  print "not ";
+}
+print "ok 6\n";
 
