@@ -12,7 +12,7 @@ use Carp;
 
 BEGIN {
   require XML::Parser::Expat;
-  $VERSION = '2.33';
+  $VERSION = '2.34';
   die "Parser.pm and Expat.pm versions don't match"
     unless $VERSION eq $XML::Parser::Expat::VERSION;
 }
@@ -48,10 +48,17 @@ sub new {
     if ($stylepkg !~ /::/) {
       $stylepkg = "\u$style";
       
-      $stylepkg = 'XML::Parser::Style::' . $stylepkg;
-      my $stylefile = $stylepkg;
-      $stylefile =~ s/::/\//g;
-      require "$stylefile.pm";
+      eval {
+          my $fullpkg = 'XML::Parser::Style::' . $stylepkg;
+          my $stylefile = $fullpkg;
+          $stylefile =~ s/::/\//g;
+          require "$stylefile.pm";
+          $stylepkg = $fullpkg;
+      };
+      if ($@) {
+          # fallback to old behaviour
+          $stylepkg = 'XML::Parser::' . $stylepkg;
+      }
     }
     
     my $htype;

@@ -28,7 +28,7 @@ my $xmlstr = '<foo>bar</foo>';
 
 {
     # Object style
-    my $parser = XML::Parser->new(Style => 'Object');
+    my $parser = XML::Parser->new(Style => 'Objects');
     ok($parser);
     
     my $tree = $parser->parse($xmlstr);
