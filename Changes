@@ -1,5 +1,9 @@
 Revision history for Perl extension XML::Parser.
 
+2.33
+    - Fixed Tree style (grantm)
+    - Fixed some non-utf8 stuff in DTDs (patch in XML::DOM tarball)
+
 2.32
     - Memory leak fix (Juerd Waalboer).
     - Added windows-1252 encoding
