@@ -453,7 +453,8 @@ sub parse {
     }
     else {
       eval {
-	$ioref = *{$arg}{IO};
+        no strict 'refs';
+	$ioref = *{$arg}{IO} if defined *{$arg};
       };
       undef $@;
     }

@@ -6,7 +6,7 @@
 # Change 1..1 below to 1..last_test_to_print .
 # (It may become useful if the test is moved to ./t subdirectory.)
 
-BEGIN {print "1..25\n";}
+BEGIN {print "1..27\n";}
 END {print "not ok 1\n" unless $loaded;}
 use XML::Parser;
 $loaded = 1;
@@ -235,3 +235,30 @@ print "ok 24\n";
 
 print "not " unless $indexok;
 print "ok 25\n";
+
+
+# Test that memory leak through autovivifying symbol table entries is fixed.
+
+my $count = 0;
+$parser = new XML::Parser(
+  Handlers => { 
+    Start => sub { $count++ }
+  }
+);
+
+$xmlstring = '<a><b>Sea</b></a>';
+
+eval {
+    $parser->parsestring($xmlstring);
+};
+
+if($count != 2) {
+  print "not ";
+}
+print "ok 26\n";
+
+if(defined(*{$xmlstring})) {
+  print "not ";
+}
+print "ok 27\n";
+
