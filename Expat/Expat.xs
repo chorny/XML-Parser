@@ -259,7 +259,7 @@ generate_model(XML_Content *model) {
 
   switch(model->type) {
   case XML_CTYPE_NAME:
-    hv_store(hash, "Tag", 3, newSVpv((char *)model->name, 0), 0);
+    hv_store(hash, "Tag", 3, newUTF8SVpv((char *)model->name, 0), 0);
     break;
 
   case XML_CTYPE_MIXED:
