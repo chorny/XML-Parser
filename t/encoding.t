@@ -91,7 +91,7 @@ sub get_attr {
   %attr = @list;
 }
 
-my $p = new XML::Parser(Handlers => {Start => \&get_attr});
+$p = new XML::Parser(Handlers => {Start => \&get_attr});
 
 eval{ $p->parse($docstring) };
 
