@@ -22,7 +22,7 @@ my $lastel;
 sub text {
   my ($xp, $data) = @_;
 
-  push(@bytes, unpack('U0C*', $data));
+  push(@bytes, unpack('U0C*', $data)); # was fixed 5.10
 }
 
 sub start {
