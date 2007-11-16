@@ -57,3 +57,4 @@ t/partial.t                     Test script
 t/skip.t                        Test script
 t/stream.t                      Test script
 t/styles.t                      Test script
+META.yml                                 Module meta-data (added by MakeMaker)

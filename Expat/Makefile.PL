@@ -19,7 +19,7 @@ push(@extras,
 push(@extras,
      ABSTRACT => "Lowlevel access to James Clark's expat XML parser",
      AUTHOR        => 'Clark Cooper (coopercc@netheaven.com)')
-    if ($ExtUtils::MakeMaker::Version >= 5.4301);
+    if ($ExtUtils::MakeMaker::VERSION >= 5.4301);
      
 WriteMakefile(
               NAME	=> 'XML::Parser::Expat',

@@ -1,3 +1,4 @@
+use 5.004;
 use ExtUtils::MakeMaker;
 use Config;
 
@@ -21,8 +22,7 @@ foreach (@ARGV) {
 }
 
 @ARGV = @replacement_args;
-
-if (not $expat_libpath and $] >= 5.006001) {
+if (not $expat_libpath and $] >= 5.006001 and $^O ne 'MSWin32') {
   require ExtUtils::Liblist;		# Buggy before this
   ($expat_libpath) = ExtUtils::Liblist->ext('-lexpat');
 }
@@ -35,6 +35,15 @@ unless ($expat_libpath) {
       $found = 1;
       last;
     }
+  }
+
+  if (!$found and $^O eq 'MSWin32') {
+    if (-f 'C:/lib/Expat-2.0.0/Libs/libexpat.dll') {
+      $expat_libpath = 'C:/lib/Expat-2.0.0/Libs';
+      $expat_incpath = 'C:/lib/Expat-2.0.0/Source/lib';
+      $found = 1;
+    }
+
   }
 
   unless ($found) {
@@ -86,13 +95,20 @@ push(@extras,
 push(@extras,
      ABSTRACT_FROM => 'Parser.pm',
      AUTHOR        => 'Clark Cooper (coopercc@netheaven.com)')
-    if ($ExtUtils::MakeMaker::Version >= 5.4301);
-     
+    if ($ExtUtils::MakeMaker::VERSION >= 5.4301);
+
+push(@extras,
+     LICENSE => 'perl')
+    if ($ExtUtils::MakeMaker::VERSION gt '6.30');
+
 WriteMakefile(
               NAME	=> 'XML::Parser',
 	      DIR	=> [qw(Expat)],
               dist      => {COMPRESS => 'gzip', SUFFIX => '.gz'},
               VERSION_FROM => 'Parser.pm',
+              PREREQ_PM    => {
+                LWP => 0, #for tests
+              },
 	      @extras
              );
 

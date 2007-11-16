@@ -1877,9 +1877,9 @@ XML_PositionContext(parser, lines)
 	  PUSHs(sv_2mortal(newSViv(relpos)));
 
 SV *
-GenerateNSName(name, namespace, table, list)
+GenerateNSName(name, xml_namespace, table, list)
 	SV *				name
-	SV *				namespace
+	SV *				xml_namespace
 	SV *				table
 	SV *				list
     CODE:
@@ -1892,7 +1892,7 @@ GenerateNSName(name, namespace, table, list)
 	  char *	blim;
 
 	  nmstr = SvPV(name, nmlen);
-	  nsstr = SvPV(namespace, nslen);
+	  nsstr = SvPV(xml_namespace, nslen);
 
 	  /* Form a namespace-name string that looks like expat's */
 	  New(321, buff, nmlen + nslen + 2, char);

@@ -1,5 +1,11 @@
 Revision history for Perl extension XML::Parser.
 
+2.35
+    - Works in 5.10 (Andreas J. Koenig)
+    - Added license in Makefile.PL (Alexandr Ciornii)
+    - Makefile.PL also searches for expat in C:/lib/Expat-2.0.0 (Alexandr Ciornii)
+    - No longer uses variable named 'namespace' in Expat.xs (Jeff Hunter)
+
 2.33
     - Fixed Tree style (grantm)
     - Fixed some non-utf8 stuff in DTDs (patch in XML::DOM tarball)
