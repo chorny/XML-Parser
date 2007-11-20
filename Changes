@@ -1,5 +1,8 @@
 Revision history for Perl extension XML::Parser.
 
+2.36
+    - Fix for Carp::Heavy bugs
+
 2.35
     - Works in 5.10 (Andreas J. Koenig)
     - Added license in Makefile.PL (Alexandr Ciornii)
