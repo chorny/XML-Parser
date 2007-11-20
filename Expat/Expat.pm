@@ -10,7 +10,7 @@ use Carp;
 require DynaLoader;
 
 @ISA = qw(DynaLoader);
-$VERSION = "2.35" ;
+$VERSION = "2.36" ;
 
 $have_File_Spec = $INC{'File/Spec.pm'} || do 'File/Spec.pm';
 
