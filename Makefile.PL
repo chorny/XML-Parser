@@ -85,7 +85,7 @@ sub MY::test
   $ret;
 }
 
-@extras = ();
+my @extras = ();
 
 push(@extras,
      CAPI => 'TRUE')
