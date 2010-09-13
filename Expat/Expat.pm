@@ -667,11 +667,11 @@ XML::Parser::Expat - Lowlevel access to James Clark's expat XML parser
 
  use XML::Parser::Expat;
 
- $parser = new XML::Parser::Expat;
+ $parser = XML::Parser::Expat->new;
  $parser->setHandlers('Start' => \&sh,
                       'End'   => \&eh,
                       'Char'  => \&ch);
- open(FOO, 'info.xml') or die "Couldn't open";
+ open(FOO, '<', 'info.xml') or die "Couldn't open";
  $parser->parse(*FOO);
  close(FOO);
  # $parser->parse('<foo id="me"> here <em>we</em> go </foo>');

@@ -297,7 +297,7 @@ sub file_ext_ent_handler {
   }
 
   require IO::File;
-  my $fh = new IO::File($path);
+  my $fh = IO::File->new($path);
   unless (defined $fh) {
     $xp->{ErrorMessage}
       .= "Failed to open $path:\n$!";
@@ -336,7 +336,7 @@ XML::Parser - A perl module for parsing XML documents
 =head1 SYNOPSIS
 
   use XML::Parser;
-  
+
   $p1 = XML::Parser->new(Style => 'Debug');
   $p1->parsefile('REC-xml-19980210.xml');
   $p1->parse('<foo id="me">Hello World</foo>');
