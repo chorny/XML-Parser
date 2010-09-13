@@ -8,6 +8,10 @@
 
 package XML::Parser;
 
+use strict;
+
+use vars qw($VERSION $LWP_load_failed);
+
 use Carp;
 
 BEGIN {
@@ -16,10 +20,6 @@ BEGIN {
   die "Parser.pm and Expat.pm versions don't match"
     unless $VERSION eq $XML::Parser::Expat::VERSION;
 }
-
-use strict;
-
-use vars qw($VERSION $LWP_load_failed);
 
 $LWP_load_failed = 0;
 
@@ -143,7 +143,7 @@ sub parse_start {
   my $init = delete $handlers{Init};
   my $final = delete $handlers{Final};
 
-  my $expatnb = new XML::Parser::ExpatNB(@expat_options, @_);
+  my $expatnb = XML::Parser::ExpatNB->new(@expat_options, @_);
   $expatnb->setHandlers(%handlers);
 
   &$init($expatnb)
@@ -167,7 +167,7 @@ sub parse {
       unless exists $self->{Non_Expat_Options}->{$key};
   }
   
-  my $expat = new XML::Parser::Expat(@expat_options, @_);
+  my $expat = XML::Parser::Expat->new(@expat_options, @_);
   my %handlers = %{$self->{Handlers}};
   my $init = delete $handlers{Init};
   my $final = delete $handlers{Final};
@@ -337,18 +337,18 @@ XML::Parser - A perl module for parsing XML documents
 
   use XML::Parser;
   
-  $p1 = new XML::Parser(Style => 'Debug');
+  $p1 = XML::Parser->new(Style => 'Debug');
   $p1->parsefile('REC-xml-19980210.xml');
   $p1->parse('<foo id="me">Hello World</foo>');
 
   # Alternative
-  $p2 = new XML::Parser(Handlers => {Start => \&handle_start,
+  $p2 = XML::Parser->new(Handlers => {Start => \&handle_start,
                                      End   => \&handle_end,
                                      Char  => \&handle_char});
   $p2->parse($socket);
 
   # Another alternative
-  $p3 = new XML::Parser(ErrorContext => 2);
+  $p3 = XML::Parser->new(ErrorContext => 2);
 
   $p3->setHandlers(Char    => \&text,
                    Default => \&other);
