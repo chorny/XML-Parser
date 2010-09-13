@@ -47,7 +47,7 @@ unless ($expat_libpath) {
   }
 
   unless ($found) {
-    die <<'Expat_Not_Installed;';
+    warn <<'Expat_Not_Installed;';
 
 Expat must be installed prior to building XML::Parser and I can't find
 it in the standard library directories. You can download expat from:
@@ -70,6 +70,7 @@ you may (on some platforms) also have to set your LD_LIBRARY_PATH environment
 variable at run time for perl to find the library.
 
 Expat_Not_Installed;
+    exit 0;
   }
 }
 
