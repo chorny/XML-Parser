@@ -92,23 +92,50 @@ push(@extras,
     if ($PERL_VERSION >= 5.005 and $OSNAME eq 'MSWin32'
 	and $Config{archname} =~ /-object\b/i);
 
-push(@extras,
-     ABSTRACT_FROM => 'Parser.pm',
-     AUTHOR        => 'Clark Cooper (coopercc@netheaven.com)')
-    if ($ExtUtils::MakeMaker::VERSION >= 5.4301);
+WriteMakefile1(
+  ABSTRACT_FROM => 'Parser.pm',
+  AUTHOR        => 'Clark Cooper (coopercc@netheaven.com)',
+  LICENSE => 'perl',
+  MIN_PERL_VERSION => '5.004',
+  META_MERGE => {
+    resources => {
+      repository => 'http://github.com/chorny/XML-Parser',
+    },
+  },
+  #BUILD_REQUIRES => {
+  #},
 
-push(@extras,
-     LICENSE => 'perl')
-    if ($ExtUtils::MakeMaker::VERSION gt '6.30');
+  NAME	=> 'XML::Parser',
+  DIR	=> [qw(Expat)],
+  dist      => {COMPRESS => 'gzip', SUFFIX => '.gz'},
+  VERSION_FROM => 'Parser.pm',
+  PREREQ_PM    => {
+    LWP => 0, #for tests
+  },
+  @extras
+);
 
-WriteMakefile(
-              NAME	=> 'XML::Parser',
-	      DIR	=> [qw(Expat)],
-              dist      => {COMPRESS => 'gzip', SUFFIX => '.gz'},
-              VERSION_FROM => 'Parser.pm',
-              PREREQ_PM    => {
-                LWP => 0, #for tests
-              },
-	      @extras
-             );
+
+sub WriteMakefile1 {  #Written by Alexandr Ciornii, version 0.21. Added by eumm-upgrade.
+  my %params=@_;
+  my $eumm_version=$ExtUtils::MakeMaker::VERSION;
+  $eumm_version=eval $eumm_version;
+  die "EXTRA_META is deprecated" if exists $params{EXTRA_META};
+  die "License not specified" if not exists $params{LICENSE};
+  if ($params{BUILD_REQUIRES} and $eumm_version < 6.5503) {
+    #EUMM 6.5502 has problems with BUILD_REQUIRES
+    $params{PREREQ_PM}={ %{$params{PREREQ_PM} || {}} , %{$params{BUILD_REQUIRES}} };
+    delete $params{BUILD_REQUIRES};
+  }
+  delete $params{CONFIGURE_REQUIRES} if $eumm_version < 6.52;
+  delete $params{MIN_PERL_VERSION} if $eumm_version < 6.48;
+  delete $params{META_MERGE} if $eumm_version < 6.46;
+  delete $params{META_ADD} if $eumm_version < 6.46;
+  delete $params{LICENSE} if $eumm_version < 6.31;
+  delete $params{AUTHOR} if $] < 5.005;
+  delete $params{ABSTRACT_FROM} if $] < 5.005;
+  delete $params{BINARY_LOCATION} if $] < 5.005;
+
+  WriteMakefile(%params);
+}
 
