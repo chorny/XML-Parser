@@ -1,5 +1,7 @@
 Revision history for Perl extension XML::Parser.
 
+    - Add windows-1251.enc
+
 2.36
     - Fix for Carp::Heavy bugs
 
