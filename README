@@ -12,6 +12,8 @@ from:
 
 	 http://sourceforge.net/projects/expat/
 
+Install 'expat-devel' package with your OS package manager.
+
 The documentation for this extension can be found in pod format at the end
 of the files Parser.pm and Expat/Expat.pm. The perldoc program, provided with
 the perl distribution, can be used to view this documentation.

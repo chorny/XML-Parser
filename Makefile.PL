@@ -50,7 +50,10 @@ unless ($expat_libpath) {
     warn <<'Expat_Not_Installed;';
 
 Expat must be installed prior to building XML::Parser and I can't find
-it in the standard library directories. You can download expat from:
+it in the standard library directories. Install 'expat-devel' package with your
+OS package manager.
+
+Or you can download expat from:
 
 http://sourceforge.net/projects/expat/
 
