@@ -166,6 +166,12 @@ WriteMakefile1(
   PREREQ_PM    => {
     LWP => 0, #for tests
   },
+    $^O =~/win/i ? (
+        dist => {
+            TAR      => 'ptar',
+            TARFLAGS => '-c -C -f',
+        },
+    ) : (),
   @extras
 );
 
