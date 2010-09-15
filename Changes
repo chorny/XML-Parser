@@ -2,6 +2,8 @@ Revision history for Perl extension XML::Parser.
 
     - Add windows-1251.enc
     - Update iso-8859-7.enc (RT#40712)
+    - Use Devel::CheckLib
+    - Better description of expat packages
 
 2.36
     - Fix for Carp::Heavy bugs
