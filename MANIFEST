@@ -1,3 +1,4 @@
+inc/Devel/CheckLib.pm
 Changes                         Change log
 Expat/Expat.pm                  XML::Parser::Expat module
 Expat/Expat.xs                  Extension library
@@ -20,6 +21,7 @@ Parser/Encodings/iso-8859-7.enc ISO-8859-7 binary encoding map
 Parser/Encodings/iso-8859-8.enc ISO-8859-8 binary encoding map
 Parser/Encodings/iso-8859-9.enc ISO-8859-9 binary encoding map
 Parser/Encodings/windows-1250.enc cp1250-WinLatin2 binary encoding map
+Parser/Encodings/windows-1251.enc cp1251-Russian binary encoding map
 Parser/Encodings/windows-1252.enc cp1252-WinLatin1 binary encoding map
 Parser/Encodings/x-euc-jp-jisx0221.enc   X-euc-jp-jisx0221 encoding map
 Parser/Encodings/x-euc-jp-unicode.enc    X-euc-jp-unicde encoding map

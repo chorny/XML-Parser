@@ -1,5 +1,9 @@
-use 5.004;
+
+use 5.004005; #Devel::CheckLib
 use ExtUtils::MakeMaker;
+use lib qw(inc);
+use Devel::CheckLib;
+
 use Config;
 
 $expat_libpath = '';
@@ -15,6 +19,7 @@ foreach (@ARGV) {
     else {
       $expat_incpath = $2;
     }
+    #push(@replacement_args, "$1=$2");
   }
   else {
     push(@replacement_args, $_);
@@ -22,16 +27,57 @@ foreach (@ARGV) {
 }
 
 @ARGV = @replacement_args;
+
+unless (
+  check_lib(     # fill in what you prompted the user for here
+    lib => [qw(expat)],
+    header => ['expat.h'],
+    incpath => $expat_incpath,
+    ($expat_libpath?
+    (libpath => $expat_libpath):()),
+  )) {
+    warn <<'Expat_Not_Installed;';
+
+Expat must be installed prior to building XML::Parser and I can't find
+it in the standard library directories. Install 'expat-devel' package with your
+OS package manager.
+
+Or you can download expat from:
+
+http://sourceforge.net/projects/expat/
+
+If expat is installed, but in a non-standard directory, then use the
+following options to Makefile.PL:
+
+    EXPATLIBPATH=...  To set the directory in which to find libexpat
+
+    EXPATINCPATH=...  To set the directory in which to find expat.h
+
+For example:
+
+    perl Makefile.PL EXPATLIBPATH=/home/me/lib EXPATINCPATH=/home/me/include
+
+Note that if you build against a shareable library in a non-standard location
+you may (on some platforms) also have to set your LD_LIBRARY_PATH environment
+variable at run time for perl to find the library.
+
+Expat_Not_Installed;
+    #exit;
+}
+
 if (not $expat_libpath and $] >= 5.006001 and $^O ne 'MSWin32') {
   require ExtUtils::Liblist;		# Buggy before this
   ($expat_libpath) = ExtUtils::Liblist->ext('-lexpat');
 }
+
+=for cmt
 
 unless ($expat_libpath) {
   # Test for existence of libexpat
   my $found = 0;
   foreach (split(/\s+/, $Config{libpth})) {
     if (-f "$_/libexpat." . $Config{so}) {
+      $expat_libpath=$_;
       $found = 1;
       last;
     }
@@ -44,6 +90,9 @@ unless ($expat_libpath) {
       $found = 1;
     }
 
+  }
+  if ($found) {
+    print "libexpat found in $expat_libpath\n";
   }
 
   unless ($found) {
@@ -76,6 +125,7 @@ Expat_Not_Installed;
     exit 0;
   }
 }
+=cut
 
 # Don't try to descend into Expat directory for testing
 
@@ -100,7 +150,7 @@ WriteMakefile1(
   ABSTRACT_FROM => 'Parser.pm',
   AUTHOR        => 'Clark Cooper (coopercc@netheaven.com)',
   LICENSE => 'perl',
-  MIN_PERL_VERSION => '5.004',
+  MIN_PERL_VERSION => '5.00405',
   META_MERGE => {
     resources => {
       repository => 'http://github.com/chorny/XML-Parser',
