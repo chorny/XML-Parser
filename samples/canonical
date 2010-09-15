@@ -120,5 +120,5 @@ sub proc {
 
 # Tell emacs that this is really a perl script
 #Local Variables:
-#Mode: perl
+#mode: perl
 #End:
