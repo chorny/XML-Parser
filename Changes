@@ -1,15 +1,17 @@
 Revision history for Perl extension XML::Parser.
 
+2.40  2010-09-16 (by Alexandr Ciornii)
     - Add windows-1251.enc, ibm866.enc, koi8-r.enc (Russian)
     - Add windows-1255.enc (Hebrew)
     - Update iso-8859-7.enc (RT#40712)
     - Use Devel::CheckLib
     - Better description of expat packages
+    - Better Perl style in both code and docs
 
 2.36
     - Fix for Carp::Heavy bugs
 
-2.35
+2.35   (mostly by Alexandr Ciornii)
     - Works in 5.10 (Andreas J. Koenig)
     - Added license in Makefile.PL (Alexandr Ciornii)
     - Makefile.PL also searches for expat in C:/lib/Expat-2.0.0 (Alexandr Ciornii)

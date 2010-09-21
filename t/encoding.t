@@ -31,7 +31,7 @@ sub start {
   $lastel = $el;
 }
 
-my $p = new XML::Parser(Handlers => {Start => \&start, Char => \&text});
+my $p = XML::Parser->new(Handlers => {Start => \&start, Char => \&text});
 
 $p->parse($doc);
 
@@ -91,7 +91,7 @@ sub get_attr {
   %attr = @list;
 }
 
-$p = new XML::Parser(Handlers => {Start => \&get_attr});
+$p = XML::Parser->new(Handlers => {Start => \&get_attr});
 
 eval{ $p->parse($docstring) };
 

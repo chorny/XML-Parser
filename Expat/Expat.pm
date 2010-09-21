@@ -10,7 +10,7 @@ use Carp;
 require DynaLoader;
 
 @ISA = qw(DynaLoader);
-$VERSION = "2.36" ;
+$VERSION = "2.40";
 
 $have_File_Spec = $INC{'File/Spec.pm'} || do 'File/Spec.pm';
 
@@ -495,7 +495,8 @@ sub parsefile {
 }
 
 ################################################################
-package XML::Parser::ContentModel;
+package #hide from PAUSE
+ XML::Parser::ContentModel;
 use overload '""' => \&asString, 'eq' => \&thiseq;
 
 sub EMPTY  () {1}
@@ -582,7 +583,8 @@ sub thiseq {
 }
 
 ################################################################
-package XML::Parser::ExpatNB;
+package #hide from PAUSE
+ XML::Parser::ExpatNB;
 
 use vars qw(@ISA);
 use Carp;
@@ -648,7 +650,8 @@ sub parse_done {
 
 ################################################################
 
-package XML::Parser::Encinfo;
+package  #hide from PAUSE
+ XML::Parser::Encinfo;
 
 sub DESTROY {
   my $self = shift;

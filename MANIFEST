@@ -23,12 +23,15 @@ Parser/Encodings/iso-8859-9.enc ISO-8859-9 binary encoding map
 Parser/Encodings/windows-1250.enc cp1250-WinLatin2 binary encoding map
 Parser/Encodings/windows-1251.enc cp1251-Russian binary encoding map
 Parser/Encodings/windows-1252.enc cp1252-WinLatin1 binary encoding map
+Parser/Encodings/windows-1255.enc hebrew
 Parser/Encodings/x-euc-jp-jisx0221.enc   X-euc-jp-jisx0221 encoding map
 Parser/Encodings/x-euc-jp-unicode.enc    X-euc-jp-unicde encoding map
 Parser/Encodings/x-sjis-cp932.enc        x-sjis-cp932 encoding map
 Parser/Encodings/x-sjis-jdk117.enc       x-sjis-jdk117 encoding map
 Parser/Encodings/x-sjis-jisx0221.enc     x-sjis-jisx0221 encoding map
 Parser/Encodings/x-sjis-unicode.enc      x-sjis-unicode encoding map
+Parser/Encodings/ibm866.enc
+Parser/Encodings/koi8-r.enc
 Parser/Style/Debug.pm           Debug style parser
 Parser/Style/Objects.pm         Objects style parser
 Parser/Style/Stream.pm          Stream style parser
@@ -59,4 +62,3 @@ t/partial.t                     Test script
 t/skip.t                        Test script
 t/stream.t                      Test script
 t/styles.t                      Test script
-META.yml                                 Module meta-data (added by MakeMaker)
