@@ -8,13 +8,17 @@ under the same terms as Perl itself.
 This is a Perl extension interface to James Clark's XML parser, expat.
 It requires at least version 5.004 of perl and it requires that you have
 release 1.95.0 or greater of expat installed. You can download expat
-from:
+from http://sourceforge.net/projects/expat/
 
-	 http://sourceforge.net/projects/expat/
-
-Install 'expat-devel' package with your OS package manager.
+Best way is to install 'expat-devel' package with your OS package manager.
 Debian: expat-dev
 Xubuntu 6.06: libexpat1-dev
+
+After that run `cpan XML::Parser`.
+
+You can install this module from OS package too, but CPAN has most fresh version.
+CentOS/RHEL/Fedora: perl-XML-Parser
+
 
 The documentation for this extension can be found in pod format at the end
 of the files Parser.pm and Expat/Expat.pm. The perldoc program, provided with
@@ -22,7 +26,9 @@ the perl distribution, can be used to view this documentation.
 
 This was modified from the original XML::Parser created by Larry Wall.
 
-To configure this module, cd to the directory that contains this README file
+-------------
+
+To manually install this module, cd to the directory that contains this README file
 and type the following:
 
 	perl Makefile.PL
@@ -61,6 +67,9 @@ on topics relating to perl and XML takes place on the perl-xml mailing
 list, to which you can subscribe by sending mail to:
 
     subscribe-perl-xml@lyris.activestate.com
+
+
+
 
 Differences from Version 2.30
 =============================
