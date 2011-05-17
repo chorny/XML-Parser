@@ -1215,7 +1215,7 @@ name discovered in the @Encoding_Path path list is used.
 The encoding in the file is loaded and kept in the %Encoding_Table
 table. Earlier encodings of the same name are replaced.
 
-This function is automaticly called by expat when it encounters an encoding
+This function is automatically called by expat when it encounters an encoding
 it doesn't know about. Expat shouldn't call this twice for the same
 encoding name. The only reason users should use this function is to
 explicitly load an encoding not contained in the @Encoding_Path list.
