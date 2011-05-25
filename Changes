@@ -1,5 +1,13 @@
 Revision history for Perl extension XML::Parser.
 
+2.40_01 2011-05-24 (by Todd Rinaldo)
+    - better installation instructions
+    - Small spelling patches from Debian package - Thanks Nicholas Bamber
+    - RT 68399 - Upgrade Devel::CheckLib to 0.93 to make it
+      perl 5.14 compliant - qw()
+    - RT 67207 - Stop doing tied on globs - Thanks sprout
+    - RT 31319 - Fix doc links in POD for XML/Parser.pm
+
 2.40  2010-09-16 (by Alexandr Ciornii)
     - Add windows-1251.enc, ibm866.enc, koi8-r.enc (Russian)
     - Add windows-1255.enc (Hebrew)
