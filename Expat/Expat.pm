@@ -442,12 +442,12 @@ sub parse {
   my $result = 0;
   
   if (defined $arg) {
+    local *@;
     if (ref($arg) and UNIVERSAL::isa($arg, 'IO::Handle')) {
       $ioref = $arg;
-    } elsif (tied($arg)) {
-      my $class = ref($arg);
-      no strict 'refs';
-      $ioref = $arg if defined &{"${class}::TIEHANDLE"};
+    } elsif ($] < 5.008 and defined tied($arg)) {
+      require IO::Handle;
+      $ioref = $arg;
     }
     else {
       require IO::Handle;
@@ -455,20 +455,21 @@ sub parse {
         no strict 'refs';
         $ioref = *{$arg}{IO} if defined *{$arg};
       };
-      undef $@;
     }
   }
   
   if (defined($ioref)) {
     my $delim = $self->{Stream_Delimiter};
     my $prev_rs;
+    my $ioclass = ref $ioref;
+    $ioclass = "IO::Handle" if !length $ioclass;
     
-    $prev_rs = ref($ioref)->input_record_separator("\n$delim\n")
+    $prev_rs = $ioclass->input_record_separator("\n$delim\n")
       if defined($delim);
     
     $result = ParseStream($parser, $ioref, $delim);
     
-    ref($ioref)->input_record_separator($prev_rs)
+    $ioclass->input_record_separator($prev_rs)
       if defined($delim);
   } else {
     $result = ParseString($parser, $arg);
