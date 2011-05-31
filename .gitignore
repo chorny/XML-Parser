@@ -10,6 +10,9 @@ XML-Parser-*
 cover_db
 Build.bat
 *.tmp
-
+*.orig
 META.yml
 MYMETA.yml
+Expat/Expat.bs
+Expat/Expat.c
+Expat/Expat.o

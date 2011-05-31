@@ -69,7 +69,13 @@ my $parser = new XML::Parser(ErrorContext  => 2,
 			     ParseParamEnt => 1,
 			     Handlers => {Entity => \&enth1});
 
-$parser->parse($docstr);
+eval { $parser->parse($docstr) };
+if($@ && $^O =~ m/freebsd/i) {
+    for(2..30) {
+        print "not ok $_ - Cannot test due to Free BSD PR 157469 # TODO: Waiting for Free BSD fix in expat\n";
+    }
+    exit;
+}
 
 sub eleh {
     my ($p, $name, $model) = @_;
