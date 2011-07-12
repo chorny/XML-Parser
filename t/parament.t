@@ -82,7 +82,13 @@ $p = new XML::Parser(ParseParamEnt => 1,
 				 }
 		    );
 
-$p->parse($doc);
+eval { $p->parse($doc) };
+if($@ && $^O =~ m/freebsd/i) {
+    for(2..12) {
+        print "not ok $_ - Cannot test due to Free BSD PR 157469 # TODO: Waiting for Free BSD fix in expat\n";
+    }
+    exit;
+}
 
 print "not " unless $gotmore;
 print "ok 6\n";
