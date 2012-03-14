@@ -10,14 +10,14 @@ It requires at least version 5.004 of perl and it requires that you have
 release 1.95.0 or greater of expat installed. You can download expat
 from http://sourceforge.net/projects/expat/
 
-Best way is to install 'expat-devel' package with your OS package manager.
-Debian: expat-dev
-Xubuntu 6.06: libexpat1-dev
+Best way is to install expat development package with your OS package manager.
+Debian/Ubuntu/similar: libexpat1-dev (old versions: expat-dev)
 
 After that run `cpan XML::Parser`.
 
 You can install this module from OS package too, but CPAN has most fresh version.
 CentOS/RHEL/Fedora: perl-XML-Parser
+Debian/Ubuntu/similar: should be already installed
 
 
 The documentation for this extension can be found in pod format at the end

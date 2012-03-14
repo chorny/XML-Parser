@@ -39,7 +39,7 @@ unless (
     warn <<'Expat_Not_Installed;';
 
 Expat must be installed prior to building XML::Parser and I can't find
-it in the standard library directories. Install 'expat-devel' package with your
+it in the standard library directories. Install expat development package with your
 OS package manager. See 'README'.
 
 Or you can download expat from:
