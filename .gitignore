@@ -11,8 +11,9 @@ cover_db
 Build.bat
 *.tmp
 *.orig
-META.yml
-MYMETA.yml
+META.*
+MYMETA.*
+Expat/MYMETA.*
 Expat/Expat.bs
 Expat/Expat.c
 Expat/Expat.o
