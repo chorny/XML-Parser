@@ -19,6 +19,9 @@ You can install this module from OS package too, but CPAN has most fresh version
 CentOS/RHEL/Fedora: perl-XML-Parser
 Debian/Ubuntu/similar: should be already installed
 
+XML::Parser installation requires gcc, so on MacOS X you need to download and run
+Xcode from Mac app store (~1.5 GB)
+
 
 The documentation for this extension can be found in pod format at the end
 of the files Parser.pm and Expat/Expat.pm. The perldoc program, provided with
