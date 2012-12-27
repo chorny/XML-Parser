@@ -1,0 +1,6 @@
+language: perl
+perl:
+  - "5.16"
+  - "5.12"
+before_script:
+  - "sudo apt-get libexpat1-dev"
