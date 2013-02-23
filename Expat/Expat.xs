@@ -1052,7 +1052,7 @@ externalEntityRef(XML_Parser parser,
 	}
 
 	if (SvTRUE(ERRSV))
-	  append_error(parser, SvPV(ERRSV, PL_na));
+	  append_error(parser, SvPV_nolen(ERRSV));
       }
     }
   }
@@ -1278,7 +1278,7 @@ XML_ParserCreate(self_sv, enc_sv, namespaces)
 	{
 	  CallbackVector *cbv;
 	  enum XML_ParamEntityParsing pep = XML_PARAM_ENTITY_PARSING_NEVER;
-	  char *enc = (char *) (SvTRUE(enc_sv) ? SvPV(enc_sv,PL_na) : 0);
+	  char *enc = (char *) (SvTRUE(enc_sv) ? SvPV_nolen(enc_sv) : 0);
 	  SV ** spp;
 
 	  Newz(320, cbv, 1, CallbackVector);
@@ -1797,7 +1797,7 @@ XML_SetBase(parser, base)
 	    b = (char *) 0;
 	  }
 	  else {
-	    b = SvPV(base, PL_na);
+	    b = SvPV_nolen(base);
 	  }
 
 	  XML_SetBase(parser, b);
